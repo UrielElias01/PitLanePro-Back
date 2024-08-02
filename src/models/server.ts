@@ -1,14 +1,16 @@
+import https from 'https';
+import fs from 'fs';
 import express, { Application } from 'express';
 import cors from 'cors';
 import routesProduct from '../routes/product';
 import routesUser from '../routes/user';
+import validateToken from '../routes/validate-token';
+import forgotPasswordRoute from '../routes/user'; 
+import { getUserRole, verifyVerificationCode, resetPassword } from '../controllers/user';
+
+import { PORT } from './config';
 import { Product } from './product';
 import { User } from './user';
-import validateToken from '../routes/validate-token'; // Importar el middleware validateToken
-import forgotPasswordRoute from '../routes/user'; 
-import { getUserRole, verifyVerificationCode } from '../controllers/user';
-import { resetPassword } from '../controllers/user';
-import { PORT } from './config';
 
 class Server {
     private app: Application;
@@ -17,45 +19,36 @@ class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT || '3001';
-        this.listen();
         this.middlewares();
         this.routes();
         this.dbConnect();
+        this.listen();
     }
 
     listen() {
-        this.app.listen(PORT, () => {
+        const httpsOptions = {
+            key: fs.readFileSync('/ssl_certificate /etc/nginx/ssl/nginx-plp.crt;'),
+            cert: fs.readFileSync('/ssl_certificate_key /etc/nginx/ssl/nginx-plp.key;')
+        };
+
+        https.createServer(httpsOptions, this.app).listen(PORT, () => {
             console.log('Aplicacion corriendo en el puerto ' + this.port);
         });
     }
 
     routes() {
-        // Rutas públicas
         this.app.use('/api/users', routesUser);
-
-        // Rutas protegidas
-        this.app.use('/api/products', validateToken, routesProduct); // Agregar validateToken como middleware para las rutas protegidas
-
+        this.app.use('/api/products', validateToken, routesProduct);
         this.app.use('/api/users/forgot-password', forgotPasswordRoute);
-
-        this.app.use('/api/reset-password', resetPassword)
-
-        this.app.use('/api/user-role', getUserRole)
-
-        
-    // Ruta para verificar el código de verificación
-    this.app.use('/api/verify-code', verifyVerificationCode); // Utiliza la función verifyVerificationCode del controlador de usuario
-
-    
+        this.app.use('/api/reset-password', resetPassword);
+        this.app.use('/api/user-role', getUserRole);
+        this.app.use('/api/verify-code', verifyVerificationCode);
     }
 
     middlewares() {
-        // Parseo body
         this.app.use(express.json());
-
-        // Cors
         this.app.use(cors({
-            origin: '*', // Permite todos los orígenes
+            origin: '*',
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
             allowedHeaders: 'Content-Type, Authorization'
         }));
