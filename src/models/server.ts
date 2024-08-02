@@ -27,8 +27,8 @@ class Server {
 
     listen() {
         const httpsOptions = {
-            key: fs.readFileSync('/ssl_certificate /etc/nginx/ssl/nginx-plp.crt;'),
-            cert: fs.readFileSync('/ssl_certificate_key /etc/nginx/ssl/nginx-plp.key;')
+            key: fs.readFileSync('/etc/nginx/ssl/nginx-plp.crt;'),
+            cert: fs.readFileSync('/etc/nginx/ssl/nginx-plp.key;')
         };
 
         https.createServer(httpsOptions, this.app).listen(PORT, () => {
