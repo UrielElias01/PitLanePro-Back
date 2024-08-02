@@ -55,7 +55,7 @@ class Server {
         this.app.use(cors());
     }
 
-    async dbConnect() {
+    async dbConnect() { 
         try {
             await Product.sync();
             await User.sync();
