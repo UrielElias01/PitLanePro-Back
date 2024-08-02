@@ -44,6 +44,7 @@ class Server {
         this.app.use('/api/products', validate_token_1.default, product_1.default); // Agregar validateToken como middleware para las rutas protegidas
         this.app.use('/api/users/forgot-password', user_3.default);
         this.app.use('/api/reset-password', user_5.resetPassword);
+        this.app.use('/api/user-role', user_4.getUserRole);
         // Ruta para verificar el código de verificación
         this.app.use('/api/verify-code', user_4.verifyVerificationCode); // Utiliza la función verifyVerificationCode del controlador de usuario
     }
@@ -51,7 +52,11 @@ class Server {
         // Parseo body
         this.app.use(express_1.default.json());
         // Cors
-        this.app.use((0, cors_1.default)());
+        this.app.use((0, cors_1.default)({
+            origin: '*', // Permite todos los orígenes
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+            allowedHeaders: 'Content-Type, Authorization'
+        }));
     }
     dbConnect() {
         return __awaiter(this, void 0, void 0, function* () {
