@@ -6,7 +6,7 @@ import { Product } from './product';
 import { User } from './user';
 import validateToken from '../routes/validate-token'; // Importar el middleware validateToken
 import forgotPasswordRoute from '../routes/user'; 
-import { verifyVerificationCode } from '../controllers/user';
+import { getUserRole, verifyVerificationCode } from '../controllers/user';
 import { resetPassword } from '../controllers/user';
 import { PORT } from './config';
 
@@ -39,6 +39,8 @@ class Server {
         this.app.use('/api/users/forgot-password', forgotPasswordRoute);
 
         this.app.use('/api/reset-password', resetPassword)
+
+        this.app.use('/api/user-role', getUserRole)
 
         
     // Ruta para verificar el código de verificación
