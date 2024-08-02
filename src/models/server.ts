@@ -52,7 +52,11 @@ class Server {
         this.app.use(express.json());
 
         // Cors
-        this.app.use(cors());
+        this.app.use(cors({
+            origin: '*', // Permite todos los orígenes
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+            allowedHeaders: 'Content-Type, Authorization'
+        }));
     }
 
     async dbConnect() { 
